@@ -60,14 +60,14 @@ environment:
 
 functions:
   rsvp:
-    handler: handler.rsvp
+    handler: src/rsvp.rsvp
     events:
       - http:
           path: rsvp
           method: post
           cors: true
   lookup:
-    handler: handler.lookup
+    handler: src/lookup.lookup
     events:
       - http:
           path: lookup
