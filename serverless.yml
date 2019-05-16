@@ -4,11 +4,13 @@ service: rsvp
 # Use the serverless-webpack plugin to transpile ES6
 plugins:
   - serverless-webpack
+  - serverless-dynamodb-local
   - serverless-offline
 
 # serverless-webpack configuration
 # Enable auto-packing of external modules
 custom:
+  environment: ${file(env.yml):${self:custom.stage}, file(env.yml):default}
   stage: ${opt:stage, self:provider.stage}
   tableName: weddingrsvps-${self:custom.stage}
   tableThroughputs:
@@ -20,6 +22,13 @@ custom:
     includeModules: true
   serverless-offline:
     port: 3214
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
 
 provider:
   name: aws
@@ -27,6 +36,8 @@ provider:
   stage: dev
   region: us-east-1
   environment:
+    AWS_ACCESS_KEY_ID: ${self:custom.environment.AWS_ACCESS_KEY_ID}
+    AWS_SECRET_ACCESS_KEY: ${self:custom.environment.AWS_SECRET_ACCESS_KEY}
     tableName: ${self:custom.tableName}
   iamRoleStatements:
     - Effect: Allow
@@ -39,7 +50,7 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - "Fn::GetAtt": [ RsvpsTable, Arn ]
+        - "Fn::GetAtt": [RsvpsTable, Arn]
 
 # Create our resources with separate CloudFormation templates
 resources:
@@ -47,12 +58,24 @@ resources:
   - ${file(resources/dynamo.yml)}
 
 environment:
-    tableName: ${self:custom.tableName}
+  tableName: ${self:custom.tableName}
 
 functions:
-  hello:
-    handler: handler.hello
+  rsvp:
+    handler: handler.rsvp
     events:
       - http:
-          path: hello
+          path: rsvp
+          method: post
+          cors: true
+  lookup:
+    handler: handler.lookup
+    events:
+      - http:
+          path: lookup
           method: get
+          cors: true
+          integration: lambda
+          request:
+            template:
+              application/json: '{ "name" : "$input.params(''name'')" }'
