@@ -73,9 +73,5 @@ functions:
     events:
       - http:
           path: lookup
-          method: get
+          method: post
           cors: true
-          integration: lambda
-          request:
-            template:
-              application/json: '{ "name" : "$input.params(''name'')" }'

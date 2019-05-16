@@ -48,7 +48,8 @@ const Guest = props => {
 };
 
 const GuestResponse = props => {
-  return _.assign({}, defaultResponse, props);
+  let res = _.assign({}, defaultResponse, props);
+  return _.pickBy(res, _.negate(_.isEmpty));
 };
 
 const rsvpParams = guest => {
@@ -70,13 +71,19 @@ const saveGuest = async guest => {
 };
 
 export const rsvp = async (event, context) => {
-  const { guests } = event.body;
+  const { invitedGuest, guests } = JSON.parse(event.body);
   let savedGuests = [];
 
-  if (guests) {
+  if (!invitedGuest) {
+    return respond({ message: "Please provide an invited guest." }, 422);
+  }
+
+  if (invitedGuest && guests.length > 0) {
     await Promise.all(
       _.map(guests, async g => {
         const guest = GuestResponse(g);
+        guest.invitedGuest = invitedGuest;
+
         if (guest && guest.name) {
           try {
             await saveGuest(guest);
@@ -90,13 +97,16 @@ export const rsvp = async (event, context) => {
         }
       })
     );
-  }
 
-  return respond(savedGuests, 201);
+    return respond(savedGuests, 201);
+  } else {
+    return respond({ message: "Invalid request" }, 400);
+  }
 };
 
 export const lookup = async (event, context) => {
-  const key = keyFromName(event.name);
+  const { name } = JSON.parse(event.body);
+  const key = keyFromName(name);
 
   const guest = _.find(GUESTS, g => {
     const { guestName, partnerName } = Guest(g);
@@ -104,7 +114,7 @@ export const lookup = async (event, context) => {
   });
 
   if (guest) {
-    return respond(guest);
+    return respond(Guest(guest));
   } else {
     return respond({ message: "Not Found" }, 404);
   }
