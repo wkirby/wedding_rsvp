@@ -2,6 +2,7 @@ import "@babel/polyfill";
 import _ from "lodash";
 import md5 from "md5";
 import dynamodb from "serverless-dynamodb-client";
+import FuzzySearch from "fuzzy-search";
 
 const keyFromName = name => name.replace(/ /g, "").toLowerCase();
 const idFromName = name => md5(keyFromName(name));
@@ -106,16 +107,20 @@ export const rsvp = async (event, context) => {
 
 export const lookup = async (event, context) => {
   const { name } = JSON.parse(event.body);
-  const key = keyFromName(name);
 
-  const guest = _.find(GUESTS, g => {
-    const { guestName, partnerName } = Guest(g);
-    return key === keyFromName(guestName) || key === keyFromName(partnerName);
+  if (name.length < 3) {
+    return respond({ message: "Please provide a full name for search." }, 400);
+  }
+
+  const searcher = new FuzzySearch(GUESTS, ["guestName", "partnerName"], {
+    sort: true
   });
+
+  const guest = _.head(searcher.search(name));
 
   if (guest) {
     return respond(Guest(guest));
   } else {
-    return respond({ message: "Not Found" }, 404);
+    return respond({ message: "No guest found with that name." }, 404);
   }
 };

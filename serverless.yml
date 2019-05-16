@@ -36,8 +36,6 @@ provider:
   stage: dev
   region: us-east-1
   environment:
-    AWS_ACCESS_KEY_ID: ${self:custom.environment.AWS_ACCESS_KEY_ID}
-    AWS_SECRET_ACCESS_KEY: ${self:custom.environment.AWS_SECRET_ACCESS_KEY}
     tableName: ${self:custom.tableName}
   iamRoleStatements:
     - Effect: Allow

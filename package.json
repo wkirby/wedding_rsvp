@@ -27,6 +27,7 @@
     "@babel/polyfill": "^7.4.4",
     "@babel/runtime": "^7.4.4",
     "babel-runtime": "^6.26.0",
+    "fuzzy-search": "^3.0.1",
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
     "serverless-dynamodb-client": "0.0.2",
