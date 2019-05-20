@@ -7,7 +7,9 @@
     "test": "jest",
     "db:install": "sls dynamodb install",
     "db:migrate": "sls dynamodb start --migrate",
-    "dev": "sls offline start --noTimeout"
+    "dev": "sls offline start --noTimeout",
+    "deploy": "sls deploy --aws-profile apsis",
+    "deploy:prod": "sls deploy --stage prod --aws-profile apsis"
   },
   "author": "",
   "license": "MIT",

@@ -1,12 +1,15 @@
-import * as handler from '../handler';
+import * as lookup from '../src/lookup';
 
-test('hello', async () => {
-  const event = 'event';
+test('lookup', async () => {
+  const event = { body: JSON.stringify({ name: 'Noah' }) };
   const context = 'context';
+
   const callback = (error, response) => {
+    expect(error).toBe(null);
     expect(response.statusCode).toEqual(200);
     expect(typeof response.body).toBe("string");
   };
 
-  await handler.hello(event, context, callback);
+  let res = await lookup.lookup(event, context, callback);
+  console.log(res);
 });
