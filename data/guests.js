@@ -1,6 +1,6 @@
 export const GUESTS = [
   {
-    guestName: "Jennifer Swatsky",
+    guestName: "Jennifer Bourget",
     partnerName: "Tom Mullen"
   },
   {
