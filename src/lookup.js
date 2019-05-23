@@ -15,9 +15,10 @@ const Guest = props => {
 
 export const lookup = async (event, context) => {
   const { name } = JSON.parse(event.body);
+  const trimmedName = name.trim();
   console.log(`Starting lookup for ${name}`);
 
-  if (name.length < 3) {
+  if (trimmedName.length < 3) {
     console.warn(`Name too short. Returning 400.`);
     return respond({ message: "Please provide a full name for search." }, 400);
   }
@@ -26,7 +27,7 @@ export const lookup = async (event, context) => {
     sort: true
   });
 
-  const guest = _.head(searcher.search(name));
+  const guest = _.head(searcher.search(trimmedName));
 
   if (guest) {
     console.log(`Found ${guest}.`);
