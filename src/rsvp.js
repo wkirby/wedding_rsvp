@@ -2,6 +2,7 @@ import _ from "lodash";
 import { respond } from "./utils/utils";
 
 import { saveGuest } from "./actions/saveGuest";
+import { sendMessage } from "./utils/sendMessage";
 
 const defaultResponse = {
   name: "",
@@ -14,6 +15,18 @@ const defaultResponse = {
 const GuestResponse = props => {
   let res = _.assign({}, defaultResponse, props);
   return _.pickBy(res, _.negate(_.isEmpty));
+};
+
+const formatEmail = guests => {
+  let finalString = "";
+
+  finalString += "RSVPs received for:\n\n";
+
+  _.each(guests, g => {
+    finalString += `• ${g.name}: ${g.attending} (${g.mealOption})\n`;
+  });
+
+  return finalString;
 };
 
 export const rsvp = async (event, context) => {
@@ -42,6 +55,16 @@ export const rsvp = async (event, context) => {
         }
       })
     );
+
+    try {
+      await sendMessage(
+        ["wyatt@apsis.io", "jessica.bourget@gmail.com"],
+        `RSVP Received from ${invitedGuest}`,
+        formatEmail(savedGuests)
+      );
+    } catch (e) {
+      console.error(e);
+    }
 
     return respond(savedGuests, 201);
   } else {

@@ -40,6 +40,10 @@ provider:
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - ses:SendEmail
+      Resource: "arn:aws:ses:us-west-2:*:*"
+    - Effect: Allow
+      Action:
         - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
