@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { respond } from "./utils/utils";
+import { respond, validateEmail } from "./utils/utils";
 
 import { saveGuest } from "./actions/saveGuest";
 import { sendMessage } from "./utils/sendMessage";
@@ -29,6 +29,20 @@ const formatEmail = guests => {
   return finalString;
 };
 
+const sendConfirmation = async (guest) => {
+  if (guest.email && validateEmail(guest.email)) {
+    try {
+      await sendMessage(
+        [guest.email],
+        "Thank you for your RSVP",
+        "This is a confirmation that we have received your RSVP for Wyatt & Jessica's wedding. Thanks!"
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
 export const rsvp = async (event, context) => {
   const { invitedGuest, guests } = JSON.parse(event.body);
   let savedGuests = [];
@@ -45,6 +59,7 @@ export const rsvp = async (event, context) => {
         if (guest && guest.name) {
           try {
             await saveGuest(guest);
+            await sendConfirmation(guest);
             console.log("Saved RSVP for Guest", guest);
             savedGuests.push(guest);
           } catch (e) {
