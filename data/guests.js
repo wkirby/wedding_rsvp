@@ -52,11 +52,10 @@ export const GUESTS = [
   },
   {
     guestName: "Amy Sweet",
-    plusOne: true
+    partnerName: "Brian Sweet"
   },
   {
-    guestName: "Julia Bonaventure",
-    partnerName: "Chris Stockdell"
+    guestName: "Julia Bonaventure"
   },
   {
     guestName: "Eliza Tilbor",
@@ -80,7 +79,8 @@ export const GUESTS = [
     guestName: "John Ostrowski"
   },
   {
-    guestName: "Becky Ostrowski"
+    guestName: "Becky Ostrowski",
+    partnerName: "Matt Schmitt"
   },
   {
     guestName: "Mat Schmidt",
