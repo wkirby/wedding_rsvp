@@ -193,7 +193,8 @@ export const GUESTS = [
     partnerName: "Britt Pfohl"
   },
   {
-    guestName: "Tim Kretchmer"
+    guestName: "Tim Kretchmer",
+    partnerName: "Violette De Lattre"
   },
   {
     guestName: "Nic Villasenor",
